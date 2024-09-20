@@ -33,16 +33,43 @@ DEPARTMENT CHAR(25)
 ``` sql
 INSERT INTO Worker
 (WORKER_ID, FIRST_NAME, LAST_NAME, SALARY, JOINING_DATE, DEPARTMENT) VALUES
-(001, &#39;Monika&#39;, &#39;Arora&#39;, 100000, &#39;14-02-20 09.00.00&#39;, &#39;HR&#39;),
-(002, &#39;Niharika&#39;, &#39;Verma&#39;, 80000, &#39;14-06-11 09.00.00&#39;, &#39;Admin&#39;),
-(003, &#39;Vishal&#39;, &#39;Singhal&#39;, 300000, &#39;14-02-20 09.00.00&#39;, &#39;HR&#39;),
-(004, &#39;Amitabh&#39;, &#39;Singh&#39;, 500000, &#39;14-02-20 09.00.00&#39;, &#39;Admin&#39;),
-(005, &#39;Vivek&#39;, &#39;Bhati&#39;, 500000, &#39;14-06-11 09.00.00&#39;, &#39;Admin&#39;),
-(006, &#39;Vipul&#39;, &#39;Diwan&#39;, 200000, &#39;14-06-11 09.00.00&#39;, &#39;Account&#39;),
-(007, &#39;Satish&#39;, &#39;Kumar&#39;, 75000, &#39;14-01-20 09.00.00&#39;, &#39;Account&#39;),
-(008, &#39;Geetika&#39;, &#39;Chauhan&#39;, 90000, &#39;14-04-11 09.00.00&#39;, &#39;Admin&#39;);
+(001, 'Monika', 'Arora', 100000, '14-02-20 09.00.00', 'HR'),
+(002, 'Niharika', 'Verma', 80000, '14-06-11 09.00.00', 'Admin'),
+(003, 'Vishal', 'Singhal', 300000, '14-02-20 09.00.00', 'HR'),
+(004, 'Amitabh', 'Singh', 500000, '14-02-20 09.00.00', 'Admin'),
+(005, 'Vivek', 'Bhati', 500000, '14-06-11 09.00.00', 'Admin'),
+(006, 'Vipul', 'Diwan', 200000, '14-06-11 09.00.00', 'Account'),
+(007, 'Satish', 'Kumar', 75000, '14-01-20 09.00.00', 'Account'),
+(008, 'Geetika', 'Chauhan', 90000, '14-04-11 09.00.00', 'Admin');
 ```
 ``` sql
 SELECT * FROM Worker;
 ```
 <img width="635" alt="Screenshot 2024-09-20 at 12 20 50 PM" src="https://github.com/user-attachments/assets/e15c2bd1-847c-4ae4-8fde-ff9d86a9b937">
+
+
+``` sql
+CREATE TABLE Bonus (
+WORKER_REF_ID INT,
+BONUS_AMOUNT INT(10),
+BONUS_DATE DATETIME,
+FOREIGN KEY (WORKER_REF_ID)
+REFERENCES Worker(WORKER_ID)
+
+ON DELETE CASCADE
+);
+```
+``` sql
+INSERT INTO Bonus (WORKER_REF_ID, BONUS_AMOUNT, BONUS_DATE) VALUES
+(001, 5000, '16-02-20'),
+(002, 3000, '16-06-11'),
+ (003, 4000, '16-02-20'),
+(001, 4500, '16-02-20'),
+(002, 3500, '16-06-11');
+```
+
+``` sql
+DELETE FROM WORKER WHERE WORKER_ID =001;
+```
+
+![image](https://github.com/user-attachments/assets/cfbeda29-3f40-4377-a830-1f005de93fef)
