@@ -180,3 +180,81 @@ WHERE WORKER_ID = 001;
 
 
 ### Practice questions on SELECT query using above created tables
+
+## Advanced SQL Queries
+
+### Joins
+* left join
+``` sql
+select worker.* from worker left join worker_clone using(worker_id) WHERE
+worker_clone.worker_id is NULL;
+```
+* inner join
+``` sql
+select w.* from worker as w inner join title as t on w.worker_id = t.worker_ref_id where
+t.worker_title = &#39;Manager&#39;;
+```
+
+``` sql
+select worker.* from worker inner join worker_clone using(worker_id);
+```
+
+### Set Operation
+
+1. UNION
+* Combines two or more SELECT statements.
+* SELECT * FROM table1 UNION
+SELECT * FROM table2;
+* Number of column, order of column must be same for table1 and table2.
+2. INTERSECT
+* Returns common values of the tables.
+* SELECT DISTINCT column-list FROM table-1 INNER JOIN table-2 USING(join_cond);
+* SELECT DISTINCT * FROM table1 INNER JOIN table2 ON USING(id);
+3. MINUS
+* This operator returns the distinct row from the first table that does not occur in the second table.
+* SELECT column_list FROM table1 LEFT JOIN table2 ON condition WHERE table2.column_name IS NULL;
+* e.g., SELECT id FROM table-1 LEFT JOIN table-2 USING(id) WHERE table-2.id IS NULL;
+
+### SUB QUERIES and corelated queries
+1. Outer query depends on inner query.
+2. Alternative to joins.
+3. Nested queries.
+4. SELECT column_list (s) FROM table_name WHERE column_name OPERATOR
+(SELECT column_list (s) FROM table_name [WHERE]);
+5. e.g., SELECT * FROM table1 WHERE col1 IN (SELECT col1 FROM table1);
+6. Sub queries exist mainly in 3 clauses
+1. Inside a WHERE clause.
+JOIN SET Operations
+Combines multiple tables based on matching
+condition.
+
+Combination is resulting set from two or more
+SELECT statements.
+Column wise combination. Row wise combination.
+Data types of two tables can be different. Datatypes of corresponding columns from each
+
+table should be the same.
+Can generate both distinct or duplicate rows. Generate distinct rows.
+The number of column(s) selected may or may not
+be the same from each table.
+
+The number of column(s) selected must be the
+same from each table.
+Combines results horizontally. Combines results vertically.
+CodeHelp
+
+2. Inside a FROM clause.
+3. Inside a SELECT clause.
+7. Subquery using FROM clause
+1. SELECT MAX(rating) FROM (SELECT * FROM movie WHERE country = ‘India’) as temp;
+8. Subquery using SELECT
+1. SELECT (SELECT column_list(s) FROM T_name WHERE condition), columnList(s) FROM T2_name WHERE
+condition;
+9. Derived Subquery
+1. SELECT columnLists(s) FROM (SELECT columnLists(s) FROM table_name WHERE [condition]) as new_table_name;
+10. Co-related sub-queries
+1. With a normal nested subquery, the inner SELECT query
+runs first and executes once, returning values to be used by
+the main query. A correlated subquery, however, executes
+once for each candidate row considered by the outer query.
+In other words, the inner query is driven by the outer query.
