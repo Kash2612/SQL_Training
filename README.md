@@ -7,26 +7,26 @@ Relational databases store data in rows and columns like a spreadsheet while non
 ## 3. Basic SQL Commands
 
 Types of SQL commands:
-1. DDL (data definition language): defining relation schema.
+1. DDL (data definition language): defining relation schema.<br/> 
    CREATE: create table, DB, view.<br/> 
-   ALTER TABLE: modification in table structure. e.g, change column datatype or add/remove columns.
-   DROP: delete table, DB, view.
-   TRUNCATE: remove all the tuples from the table.
-   RENAME: rename DB name, table name, column name etc.
-2. DRL/DQL (data retrieval language / data query language): retrieve data from the tables.
-   SELECT
-3. DML (data modification language): use to perform modifications in the DB
-   INSERT: insert data into a relation
-   UPDATE: update relation data.
-   DELETE: delete row(s) from the relation.
-4. DCL (Data Control language): grant or revoke authorities from user.
-   GRANT: access privileges to the DB
-   REVOKE: revoke user access privileges.
-5. TCL (Transaction control language): to manage transactions done in the DB
-   START TRANSACTION: begin a transaction
-   COMMIT: apply all the changes and end transaction
-   ROLLBACK: discard changes and end transaction
-   SAVEPOINT: checkout within the group of transactions in which to rollback.
+   ALTER TABLE: modification in table structure. e.g, change column datatype or add/remove columns.<br/> 
+   DROP: delete table, DB, view.<br/> 
+   TRUNCATE: remove all the tuples from the table.<br/> 
+   RENAME: rename DB name, table name, column name etc.<br/> 
+2. DRL/DQL (data retrieval language / data query language): retrieve data from the tables.<br/> 
+   SELECT<br/> 
+3. DML (data modification language): use to perform modifications in the DB<br/> 
+   INSERT: insert data into a relation<br/> 
+   UPDATE: update relation data.<br/> 
+   DELETE: delete row(s) from the relation.<br/> 
+4. DCL (Data Control language): grant or revoke authorities from user. <br/> 
+   GRANT: access privileges to the DB <br/> 
+   REVOKE: revoke user access privileges.<br/> 
+5. TCL (Transaction control language): to manage transactions done in the DB<br/> 
+   START TRANSACTION: begin a transaction<br/> 
+   COMMIT: apply all the changes and end transaction<br/> 
+   ROLLBACK: discard changes and end transaction<br/> 
+   SAVEPOINT: checkout within the group of transactions in which to rollback.<br/> 
 
 ``` sql
 CREATE DATABASE ORG;
