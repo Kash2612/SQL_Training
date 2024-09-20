@@ -6,6 +6,28 @@ Relational databases store data in rows and columns like a spreadsheet while non
 
 ## 3. Basic SQL Commands
 
+Types of SQL commands:
+1. DDL (data definition language): defining relation schema.
+   CREATE: create table, DB, view.
+   ALTER TABLE: modification in table structure. e.g, change column datatype or add/remove columns.
+   DROP: delete table, DB, view.
+   TRUNCATE: remove all the tuples from the table.
+   RENAME: rename DB name, table name, column name etc.
+2. DRL/DQL (data retrieval language / data query language): retrieve data from the tables.
+   SELECT
+3. DML (data modification language): use to perform modifications in the DB
+   INSERT: insert data into a relation
+   UPDATE: update relation data.
+   DELETE: delete row(s) from the relation.
+4. DCL (Data Control language): grant or revoke authorities from user.
+   GRANT: access privileges to the DB
+   REVOKE: revoke user access privileges.
+5. TCL (Transaction control language): to manage transactions done in the DB
+   START TRANSACTION: begin a transaction
+   COMMIT: apply all the changes and end transaction
+   ROLLBACK: discard changes and end transaction
+   SAVEPOINT: checkout within the group of transactions in which to rollback.
+
 ``` sql
 CREATE DATABASE ORG;
 ```
@@ -73,3 +95,16 @@ DELETE FROM WORKER WHERE WORKER_ID =001;
 ```
 
 ![image](https://github.com/user-attachments/assets/cfbeda29-3f40-4377-a830-1f005de93fef)
+
+``` sql
+INSERT INTO Title
+(WORKER_REF_ID, WORKER_TITLE, AFFECTED_FROM) VALUES
+(001, 'Manager', '2016-02-20 00:00:00'),
+(002, 'Executive', '2016-06-11 00:00:00'),
+(008, 'Executive', '2016-06-11 00:00:00'),
+(005, 'Manager', '2016-06-11 00:00:00'),
+(004, 'Asst. Manager', '2016-06-11 00:00:00'),
+(007, 'Executive', '2016-06-11 00:00:00'),
+(006, 'Lead', '2016-06-11 00:00:00'),
+(003, 'Lead', '2016-06-11 00:00:00');
+```
