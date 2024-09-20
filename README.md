@@ -1,8 +1,45 @@
 # SQL_Training
 
 ## 1. Introduction to Databases
-* Types of databases: Relational vs. Non-relational
+1. Types of databases: Relational vs. Non-relational
 Relational databases store data in rows and columns like a spreadsheet while non-relational databases don't, using a storage model that is best suited for the type of data it’s storing.
+
+2. SQL vs. NoSQL databases
+SQL databases are primarily called Relational Databases (RDBMS); whereas NoSQL databases are primarily called non-relational or distributed databases. <br/>
+
+- A product table in SQL Database accept data looking like this:
+``` sql
+{
+"id": "101",
+"category":"food"
+"name":"Apples",
+"qty":"150"
+}
+```
+
+- NoSQL Database might save the products in many variations withouyt constraints
+``` nosql
+  Products=[
+{
+"id":"101:
+"category":"food",,
+"name":"California Apples",
+"qty":"150"
+},
+{
+"id":"102,
+"category":"electronics"
+"name":"Apple MacBook Air",
+"qty":"10",
+"specifications":{
+   "storage":"256GB SSD",
+   "cpu":"8 Core",
+   "camera": "1080p FaceTime HD camera"
+  }
+}
+]
+```
+
 
 ## 3. Basic SQL Commands
 
@@ -10,9 +47,7 @@ Types of SQL commands:
 1. DDL (data definition language): defining relation schema.<br/> 
    CREATE: create table, DB, view.<br/> 
    ALTER TABLE: modification in table structure. e.g, change column datatype or add/remove columns.<br/> 
-   DROP: delete table, DB, view.<br/> 
-   TRUNCATE: remove all the tuples from the table.<br/> 
-   RENAME: rename DB name, table name, column name etc.<br/> 
+   DROP: delete table, DB, view.<br/>
 2. DRL/DQL (data retrieval language / data query language): retrieve data from the tables.<br/> 
    SELECT<br/> 
 3. DML (data modification language): use to perform modifications in the DB<br/> 
@@ -26,7 +61,6 @@ Types of SQL commands:
    START TRANSACTION: begin a transaction<br/> 
    COMMIT: apply all the changes and end transaction<br/> 
    ROLLBACK: discard changes and end transaction<br/> 
-   SAVEPOINT: checkout within the group of transactions in which to rollback.<br/>
 
 ### CREATE COMMAND
 
@@ -132,10 +166,6 @@ WHERE WORKER_ID = 001;
 ```
 
 ![image](https://github.com/user-attachments/assets/23d48f7f-cf5d-4167-b729-ec1dfe8cc46f)
-
-
-
-
 
 
 ### Practice questions on SELECT query using above created tables
