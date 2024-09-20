@@ -89,7 +89,7 @@ INSERT INTO Bonus (WORKER_REF_ID, BONUS_AMOUNT, BONUS_DATE) VALUES
 (001, 4500, '16-02-20'),
 (002, 3500, '16-06-11');
 ```
-
+### DELETE COMMAND
 ``` sql
 DELETE FROM WORKER WHERE WORKER_ID =001;
 ```
@@ -108,3 +108,32 @@ INSERT INTO Title
 (006, 'Lead', '2016-06-11 00:00:00'),
 (003, 'Lead', '2016-06-11 00:00:00');
 ```
+
+### ALTER COMMAND 
+``` sql
+ALTER TABLE Worker
+ADD EMAIL VARCHAR(50);
+```
+![image](https://github.com/user-attachments/assets/aa8b5500-219d-4c03-a255-3c41cfeb1f89)
+
+``` sql
+ALTER TABLE Worker
+DROP COLUMN EMAIL;
+```
+![image](https://github.com/user-attachments/assets/ae695d8c-4af7-4e55-a041-c368158eedaa)
+
+### UPDATE COMMAND
+``` sql
+UPDATE Worker
+SET SALARY = 120000
+WHERE WORKER_ID = 001;
+```
+
+![image](https://github.com/user-attachments/assets/23d48f7f-cf5d-4167-b729-ec1dfe8cc46f)
+
+
+
+
+
+
+### Practice questions on SELECT query using above created tables
