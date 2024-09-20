@@ -26,7 +26,9 @@ Types of SQL commands:
    START TRANSACTION: begin a transaction<br/> 
    COMMIT: apply all the changes and end transaction<br/> 
    ROLLBACK: discard changes and end transaction<br/> 
-   SAVEPOINT: checkout within the group of transactions in which to rollback.<br/> 
+   SAVEPOINT: checkout within the group of transactions in which to rollback.<br/>
+
+### CREATE COMMAND
 
 ``` sql
 CREATE DATABASE ORG;
