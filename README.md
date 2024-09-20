@@ -8,7 +8,7 @@ Relational databases store data in rows and columns like a spreadsheet while non
 
 Types of SQL commands:
 1. DDL (data definition language): defining relation schema.
-   CREATE: create table, DB, view.
+   CREATE: create table, DB, view.<br/> 
    ALTER TABLE: modification in table structure. e.g, change column datatype or add/remove columns.
    DROP: delete table, DB, view.
    TRUNCATE: remove all the tuples from the table.
