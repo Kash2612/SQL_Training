@@ -51,11 +51,7 @@ The Patients entity has the following attributes: id, ssn and name.
 
 The relationships between the entities indicate that a Doctor prescribes Medicines to Patients.
 
-REFER THIS LINK FOR [ER DIAGRAM](# SQL_Training
-
-<<<<<<< HEAD
-
-=======
+REFER THIS LINK FOR ![ER DIAGRAM](https://github.com/Kash2612/SQL_Training/blob/main/Untitled%20Diagram.png)
 ## 1. Introduction to Databases
 1. Types of databases: Relational vs. Non-relational
 Relational databases store data in rows and columns like a spreadsheet while non-relational databases don't, using a storage model that is best suited for the type of data it’s storing.
