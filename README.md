@@ -50,63 +50,119 @@ The Medicines entity has the following attributes: id, name, type, and expiry da
 The Patients entity has the following attributes: id, ssn and name.
 
 The relationships between the entities indicate that a Doctor prescribes Medicines to Patients.
+![ER DIAGRAM](https://github.com/Kash2612/SQL_Training/blob/main/Untitled%20Diagram.png)
 
-REFER THIS LINK FOR ![ER DIAGRAM](https://github.com/Kash2612/SQL_Training/blob/main/Untitled%20Diagram.png)
-## 1. Introduction to Databases
-1. Types of databases: Relational vs. Non-relational
-Relational databases store data in rows and columns like a spreadsheet while non-relational databases don't, using a storage model that is best suited for the type of data it’s storing.
-
-2. SQL vs. NoSQL databases
-SQL databases are primarily called Relational Databases (RDBMS); whereas NoSQL databases are primarily called non-relational or distributed databases. <br/>
-
-- A product table in SQL Database accept data looking like this:
 ``` sql
-{
-"id": "101",
-"category":"food"
-"name":"Apples",
-"qty":"150"
-}
+CREATE DATABASE Hospital;
+```
+``` sql
+USE Hospital;
+```
+``` sql
+CREATE TABLE Doctor (
+    DoctorID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Specialization VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Medicines (
+    MedicineID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Type VARCHAR(50) NOT NULL,
+    Expiry DATE NOT NULL
+);
+
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY AUTO_INCREMENT,
+    SSN VARCHAR(11) NOT NULL UNIQUE,
+    Name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Prescriptions (
+    PrescriptionID INT PRIMARY KEY AUTO_INCREMENT,
+    DoctorID INT,
+    PatientID INT,
+    MedicineID INT,
+    FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (MedicineID) REFERENCES Medicines(MedicineID)
+);
 ```
 
-- NoSQL Database might save the products in many variations withouyt constraints
-``` nosql
-  Products=[
-{
-"id":"101:
-"category":"food",,
-"name":"California Apples",
-"qty":"150"
-},
-{
-"id":"102,
-"category":"electronics"
-"name":"Apple MacBook Air",
-"qty":"10",
-"specifications":{
-   "storage":"256GB SSD",
-   "cpu":"8 Core",
-   "camera": "1080p FaceTime HD camera"
-  }
-}
-]
+``` sql
+INSERT INTO Doctor (Name, Specialization) VALUES
+('Dr. John Smith', 'Cardiology'),
+('Dr. Jane Doe', 'Pediatrics');
+
+INSERT INTO Medicines (Name, Type, Expiry) VALUES
+('Aspirin', 'Painkiller', '2025-12-31'),
+('Amoxicillin', 'Antibiotic', '2024-06-15'),
+('Ibuprofen', 'Anti-inflammatory', '2026-03-10'),
+('Metformin', 'Diabetes', '2024-09-30'),
+('Lisinopril', 'Antihypertensive', '2025-05-20');
+
+
+INSERT INTO Patients (SSN, Name) VALUES
+('123-45-6789', 'Alice Johnson'),
+('987-65-4321', 'Bob Brown');
+
+INSERT INTO Prescriptions (DoctorID, PatientID, MedicineID) VALUES
+(1, 1, 1),  -- Dr. John Smith prescribes Aspirin to Alice Johnson
+(2, 2, 2);  -- Dr. Jane Doe prescribes Amoxicillin to Bob Brown
 ```
-## 2. Relational Database Fundamentals
-### Entity-Relationship (ER) model
-An ER diagram is a database model that illustrates entities (such as objects, people, or concepts) with their attributes (such as name, type, or age). Entities can be linked with one another; the nature of these links, or relationships, depends on how entities interact.
 
-* Let's create and ER diagram that presents a real-world scenario where a doctor of a particular specialization prescribes certain medicines to a patient.
+### Let's cross check the ER Diagram using SQL Queries
 
-The Doctor entity has the following attributes: id, name and specialization.
-The Medicines entity has the following attributes: id, name, type, and expiry date.
-The Patients entity has the following attributes: id, ssn and name.
+``` sql
+SELECT * FROM Prescriptions;
+```
+![image](https://github.com/user-attachments/assets/7a5169c9-389a-409b-90f8-9d4cdd64765f)
 
-The relationships between the entities indicate that a Doctor prescribes Medicines to Patients.
+``` sql
+SELECT 
+    p.PrescriptionID,
+    d.Name AS DoctorName,
+    d.Specialization,
+    pat.Name AS PatientName,
+    pat.SSN,
+    m.Name AS MedicineName,
+    m.Type,
+    m.Expiry
+FROM 
+    Prescriptions p
+JOIN 
+    Doctor d ON p.DoctorID = d.DoctorID
+JOIN 
+    Patients pat ON p.PatientID = pat.PatientID
+JOIN 
+    Medicines m ON p.MedicineID = m.MedicineID;
+```
+![image](https://github.com/user-attachments/assets/015b55c5-162b-4a68-98a5-58e7e4077cf7)
 
-REFER THIS LINK FOR ![ER DIAGRAM](/Kash2612/SQL_Training/Untitled Diagram.png)
+``` sql
+SELECT 
+    d.Name AS DoctorName,
+    pat.Name AS PatientName,
+    m.Name AS MedicineName
+FROM 
+    Prescriptions p
+JOIN 
+    Doctor d ON p.DoctorID = d.DoctorID
+JOIN 
+    Patients pat ON p.PatientID = pat.PatientID
+JOIN 
+    Medicines m ON p.MedicineID = m.MedicineID
+WHERE 
+    d.Name = 'Dr. John Smith' AND pat.Name = 'Alice Johnson';
+```
+![image](https://github.com/user-attachments/assets/34e73532-de49-409a-9237-ed528b0c6ba5)
 
 
->>>>>>> 05347e8bf39d6cd24feb001118976c08d45c5b5a
+
+
+
+
+
 ## 3. Basic SQL Commands
 
 Types of SQL commands:
