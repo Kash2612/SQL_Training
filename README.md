@@ -469,11 +469,53 @@ WHERE T.WORKER_REF_ID IS NULL;
 
 ### Window functions
 1. ROW_NUMBER(): Unique sequential number for rows.
+``` sql
+SELECT FIRST_NAME, SALARY,
+       ROW_NUMBER() OVER (ORDER BY SALARY DESC) AS RowNum
+FROM Worker;
+```
+![image](https://github.com/user-attachments/assets/31d81a9e-83ba-4f91-87e5-e0f54e8621ac)
+
 2. RANK(): Rank with gaps for ties.
+``` sql
+SELECT FIRST_NAME, SALARY,
+       RANK() OVER (ORDER BY SALARY DESC) AS Rank_Number
+FROM Worker;
+```
+![image](https://github.com/user-attachments/assets/9b610d0f-ab57-4153-9506-a09323714d6d)
+
 3. DENSE_RANK(): Rank without gaps for ties.
+``` sql
+SELECT FIRST_NAME, SALARY,
+       DENSE_RANK() OVER (ORDER BY SALARY DESC) AS DenseRank
+FROM Worker;
+```
+![image](https://github.com/user-attachments/assets/f0180ae7-643f-48ef-aff3-eb7ef9245028)
+
 4. NTILE(): Divide the result set into specified groups.
+``` sql
+SELECT FIRST_NAME, SALARY,
+       NTILE(4) OVER (ORDER BY SALARY DESC) AS SalaryQuartile
+FROM Worker;
+```
+![image](https://github.com/user-attachments/assets/8098009a-7a20-4d55-ae7a-61ebe11e2b7b)
+
 5. LAG(): Access data from the previous row.
+``` sql
+SELECT FIRST_NAME, SALARY,
+       LAG(SALARY, 1) OVER (ORDER BY SALARY DESC) AS PreviousSalary
+FROM Worker;
+```
+![image](https://github.com/user-attachments/assets/9bb6151c-b0d7-467c-a17a-b88607a29787)
+
 6. LEAD(): Access data from the next row.
+``` sql
+SELECT FIRST_NAME, SALARY,
+       LEAD(SALARY, 1) OVER (ORDER BY SALARY DESC) AS NextSalary
+FROM Worker;
+```
+![image](https://github.com/user-attachments/assets/0221242b-6744-466f-95f4-ab12460fc485)
+
 
 
 ## 6. Stored Procedures and Functions
