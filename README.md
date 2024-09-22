@@ -39,6 +39,17 @@ SQL databases are primarily called Relational Databases (RDBMS); whereas NoSQL d
 }
 ]
 ```
+## 2. Relational Database Fundamentals
+### Entity-Relationship (ER) model
+An ER diagram is a database model that illustrates entities (such as objects, people, or concepts) with their attributes (such as name, type, or age). Entities can be linked with one another; the nature of these links, or relationships, depends on how entities interact.
+
+* Let's create and ER diagram that presents a real-world scenario where a doctor of a particular specialization prescribes certain medicines to a patient.
+
+The Doctor entity has the following attributes: id, name and specialization.
+The Medicines entity has the following attributes: id, name, type, and expiry date.
+The Patients entity has the following attributes: id, ssn and name.
+
+The relationships between the entities indicate that a Doctor prescribes Medicines to Patients.
 
 
 ## 3. Basic SQL Commands
