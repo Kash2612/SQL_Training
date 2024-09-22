@@ -516,6 +516,21 @@ FROM Worker;
 ```
 ![image](https://github.com/user-attachments/assets/0221242b-6744-466f-95f4-ab12460fc485)
 
+### Pivoting and unpivoting data
+``` sql
+SELECT 
+    W.FIRST_NAME,
+    SUM(CASE WHEN B.BONUS_DATE = '2016-02-20' THEN B.BONUS_AMOUNT ELSE 0 END) AS Bonus_Feb_2016,
+    SUM(CASE WHEN B.BONUS_DATE = '2016-06-11' THEN B.BONUS_AMOUNT ELSE 0 END) AS Bonus_Jun_2016
+FROM 
+    Worker W
+LEFT JOIN 
+    Bonus B ON W.WORKER_ID = B.WORKER_REF_ID
+GROUP BY 
+    W.FIRST_NAME;
+```
+![image](https://github.com/user-attachments/assets/90736d7d-729d-44c3-8760-8de87b25d842)
+
 
 
 ## 6. Stored Procedures and Functions
