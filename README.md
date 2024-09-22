@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/af29a830-68ce-4e54-8250-1f79e49c0ea3)# SQL_Training
+# SQL_Training
 
 ## 1. Introduction to Databases
 1. Types of databases: Relational vs. Non-relational
@@ -468,10 +468,190 @@ WHERE T.WORKER_REF_ID IS NULL;
 
 
 ### Window functions
-ROW_NUMBER(): Unique sequential number for rows.
-RANK(): Rank with gaps for ties.
-DENSE_RANK(): Rank without gaps for ties.
-NTILE(): Divide the result set into specified groups.
-LAG(): Access data from the previous row.
-LEAD(): Access data from the next row.
+1. ROW_NUMBER(): Unique sequential number for rows.
+2. RANK(): Rank with gaps for ties.
+3. DENSE_RANK(): Rank without gaps for ties.
+4. NTILE(): Divide the result set into specified groups.
+5. LAG(): Access data from the previous row.
+6. LEAD(): Access data from the next row.
+
+
+## 6. Stored Procedures and Functions
+
+### Creating and managing stored procedures
+``` sql
+DELIMITER //
+
+CREATE PROCEDURE SelectAllWorkers()
+BEGIN
+    SELECT * FROM Worker;
+END //
+
+DELIMITER ;
+```
+For Execution
+``` sql
+CALL SelectAllWorkers();
+```
+
+* DELIMITER: Changes the statement delimiter to allow for the creation of the procedure.
+* CREATE PROCEDURE SelectAllWorkers(): Defines the stored procedure with no parameters.
+* BEGIN...END: Encloses the SQL statements that belong to the procedure.
+* SELECT * FROM Worker;: The SQL statement to retrieve all records from the Worker table.
+
+![image](https://github.com/user-attachments/assets/eba7d796-26a1-446a-8fbb-9868e5257973)
+
+* creating procedures with multiple parameters
+``` sql
+DELIMITER //
+
+CREATE PROCEDURE SelectWorkersByDepartmentAndDate(
+    IN departmentName VARCHAR(25), 
+    IN joiningDate DATETIME
+)
+BEGIN
+    SELECT * 
+    FROM Worker 
+    WHERE DEPARTMENT = departmentName AND JOINING_DATE >= joiningDate;
+END //
+
+DELIMITER ;
+```
+for execution
+``` sql
+CALL SelectWorkersByDepartmentAndDate('HR', '2020-01-01');
+```
+![image](https://github.com/user-attachments/assets/2da232c2-0324-478b-9f0b-984ec7111c1f)
+
+### User-defined functions
+User-defined functions in SQL Server are custom functions created by users to perform specific tasks. They can accept parameters, execute a block of SQL code, and return a single value or a table result set. SQL Server supports three types of user-defined functions:
+
+1. Scalar Functions: These functions return a single value based on the input parameters.
+2. Inline Table-Valued Functions (iTVFs): These functions return a table variable result set.
+3. Multi-Statement Table-Valued Functions (mTVFs): These functions return a table result set after executing a block of SQL code.
+This function calculates the annual salary of a worker based on their monthly salary.
+``` sql
+DELIMITER //
+
+CREATE FUNCTION CalculateAnnualSalary(monthlySalary INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    RETURN monthlySalary * 12;
+END //
+
+DELIMITER ;
+```
+``` sql
+SELECT FIRST_NAME, LAST_NAME, CalculateAnnualSalary(SALARY) AS AnnualSalary
+FROM Worker;
+```
+![image](https://github.com/user-attachments/assets/e427c39a-2f39-4538-a86c-09dc16182307)
+
+
+### Triggers and its uses
+
+A trigger is a stored procedure in a database that automatically invokes whenever a special event in the database occurs. For example, a trigger can be invoked when a row is inserted into a specified table.<br/>
+It belongs to a specific class of stored procedures that are automatically invoked in response to database server events. Every trigger has a table attached to it.<br/>
+Because a trigger cannot be called directly, unlike a stored procedure, it is referred to as a special procedure. A trigger is automatically called whenever a data modification event against a table takes place, which is the main distinction between a trigger and a procedure. On the other hand, a stored procedure must be called directly.
+
+* The following are the key differences between triggers and stored procedures:
+
+1. Triggers cannot be manually invoked or executed.
+2. There is no chance that triggers will receive parameters.
+3. A transaction cannot be committed or rolled back inside a trigger.
+
+* Step 1: Modify the Worker Table
+``` sql
+ALTER TABLE Worker ADD COLUMN LAST_UPDATED DATETIME;
+```
+* Step 2: Create the Trigger
+``` sql
+DELIMITER //
+
+CREATE TRIGGER UpdateLastUpdated
+BEFORE UPDATE ON Worker
+FOR EACH ROW
+BEGIN
+    SET NEW.LAST_UPDATED = NOW();
+END //
+
+DELIMITER ;
+```
+
+Running the trigger
+``` sql
+UPDATE Worker SET SALARY = 120000 WHERE WORKER_ID = 1;
+```
+
+Output
+``` sql
+SELECT * FROM Worker WHERE WORKER_ID = 1;
+```
+![image](https://github.com/user-attachments/assets/b0eec839-85dc-4231-be4b-ffc55bc47bcb)
+
+###  Error handling and transaction management within stored procedures
+* Transaction Management
+Transactions allow you to execute a sequence of operations as a single unit. If any operation fails, you can roll back all changes to maintain data integrity.
+
+* Error Handling
+In MySQL, you can use the DECLARE statement to define a handler for exceptions. This allows you to manage errors gracefully.
+
+* Let's create a stored procedure
+``` sql
+DELIMITER //
+
+CREATE PROCEDURE AddBonusAndUpdateTitle(
+    IN workerID INT,
+    IN bonusAmount INT,
+    IN bonusDate DATETIME
+)
+BEGIN
+    DECLARE totalBonus INT DEFAULT 0;
+
+    -- Error handling for SQL exceptions
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Rollback the transaction if there's an error
+        ROLLBACK;
+        SELECT 'Error occurred while processing the transaction.' AS Message;
+    END;
+
+    -- Start the transaction
+    START TRANSACTION;
+
+    -- Insert the bonus into the Bonus table
+    INSERT INTO Bonus (WORKER_REF_ID, BONUS_AMOUNT, BONUS_DATE)
+    VALUES (workerID, bonusAmount, bonusDate);
+
+    -- Calculate total bonuses for the worker
+    SELECT SUM(BONUS_AMOUNT) INTO totalBonus
+    FROM Bonus
+    WHERE WORKER_REF_ID = workerID;
+
+    -- Update the title if total bonuses exceed 10,000
+    IF totalBonus > 10000 THEN
+        UPDATE Title
+        SET WORKER_TITLE = 'Senior'
+        WHERE WORKER_REF_ID = workerID;
+    END IF;
+
+    -- Commit the transaction
+    COMMIT;
+    SELECT 'Transaction completed successfully.' AS Message;
+END //
+
+DELIMITER ;
+```
+``` sql
+CALL AddBonusAndUpdateTitle(2, 8000, '2024-09-22');
+```
+![image](https://github.com/user-attachments/assets/330c5586-553f-4099-b229-8cc0f4a70c4a)
+
+``` sql
+SELECT * FROM Bonus WHERE WORKER_REF_ID = 2;
+SELECT * FROM Title WHERE WORKER_REF_ID = 2;
+```
+
+![image](https://github.com/user-attachments/assets/124952dd-bf7c-47b6-8148-4b20c7978209)
 
