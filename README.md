@@ -53,6 +53,9 @@ The relationships between the entities indicate that a Doctor prescribes Medicin
 
 REFER THIS LINK FOR [ER DIAGRAM](# SQL_Training
 
+<<<<<<< HEAD
+
+=======
 ## 1. Introduction to Databases
 1. Types of databases: Relational vs. Non-relational
 Relational databases store data in rows and columns like a spreadsheet while non-relational databases don't, using a storage model that is best suited for the type of data it’s storing.
@@ -107,6 +110,7 @@ The relationships between the entities indicate that a Doctor prescribes Medicin
 REFER THIS LINK FOR ![ER DIAGRAM](/Kash2612/SQL_Training/Untitled Diagram.png)
 
 
+>>>>>>> 05347e8bf39d6cd24feb001118976c08d45c5b5a
 ## 3. Basic SQL Commands
 
 Types of SQL commands:
