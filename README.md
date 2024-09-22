@@ -1,4 +1,4 @@
-# SQL_Training
+![image](https://github.com/user-attachments/assets/af29a830-68ce-4e54-8250-1f79e49c0ea3)# SQL_Training
 
 ## 1. Introduction to Databases
 1. Types of databases: Relational vs. Non-relational
@@ -159,8 +159,23 @@ WHERE
 
 
 
+### Denormalization and when to use it
+Denormalization is the process of adding precomputed redundant data to an otherwise normalized relational database to improve read performance. <br/>
+A denormalized database should not be confused with a database that has never been normalized.
+This can help us avoid costly joins in a relational database. Note that denormalization does not mean ‘reversing normalization’ or ‘not to normalize’. It is an optimization technique that is applied after normalization.
 
 
+* Pros of Denormalization:
+
+Retrieving data is faster since we do fewer joins
+Queries to retrieve can be simpler(and therefore less likely to have bugs), since we need to look at fewer tables.
+
+* Cons of Denormalization:
+
+Updates and inserts are more expensive.
+Denormalization can make update and insert code harder to write.
+Data may be inconsistent.
+Data redundancy necessitates more storage.
 
 
 ## 3. Basic SQL Commands
@@ -303,14 +318,12 @@ WHERE WORKER_ID = 001;
 
 ### Practice questions on SELECT query using above created tables
 
-## Advanced SQL Queries
+## 4. Advanced SQL Queries
 
 ### Joins
-* left join
-``` sql
-select worker.* from worker left join worker_clone using(worker_id) WHERE
-worker_clone.worker_id is NULL;
-```
+NOTE: <br/>
+Natural Join in SQL joins two tables based on the same attribute name and datatypes. The resulting table will contain all the attributes of both tables but keep only one copy of each common column. <br/>
+Inner Join joins two table on the basis of the column which is explicitly specified in the ON clause. The resulting table will contain all the attributes from both the tables including common column also. 
 * inner join
 ``` sql
 select w.* from worker as w inner join title as t on w.worker_id = t.worker_ref_id where
@@ -320,6 +333,96 @@ t.worker_title = &#39;Manager&#39;;
 ``` sql
 select worker.* from worker inner join worker_clone using(worker_id);
 ```
+- Outer Join
+* left join
+``` sql
+select worker.* from worker left join worker_clone using(worker_id) WHERE
+worker_clone.worker_id is NULL;
+```
+* right join
+``` sql
+SELECT *
+FROM Worker
+RIGHT JOIN Bonus ON Worker.WORKER_ID = Bonus.WORKER_REF_ID;
+```
+![image](https://github.com/user-attachments/assets/4cb76ac0-52da-4337-99fd-5bb476a5452c)
+
+* full join
+MySQL does not directly support FULL OUTER JOIN. However, we can achieve the same result by combining a LEFT JOIN and a RIGHT JOIN using a UNION.
+``` sql
+SELECT *
+FROM Worker
+LEFT JOIN Title ON Worker.WORKER_ID = Title.WORKER_REF_ID
+
+UNION
+
+SELECT *
+FROM Worker
+RIGHT JOIN Title ON Worker.WORKER_ID = Title.WORKER_REF_ID;
+```
+![image](https://github.com/user-attachments/assets/8444c7fc-cecb-4dee-bc28-d6844612d54d)
+
+* cross join
+``` sql
+SELECT *
+FROM Worker
+CROSS JOIN Bonus;
+```
+![image](https://github.com/user-attachments/assets/dbb31344-4fee-41d8-958b-94a3546e69f2)
+
+### SUB QUERIES and corelated queries
+1. subqueries
+* Outer query depends on inner query.
+* Alternative to joins.
+* Sub queries exist mainly in 3 clauses
+1. Inside a WHERE clause.
+``` sql
+SELECT *
+FROM Worker
+WHERE SALARY > (SELECT AVG(SALARY) FROM Worker);
+```
+![image](https://github.com/user-attachments/assets/29acb6df-b50b-45dd-8f1e-f2a111bbbe63)
+
+2. Inside a FROM clause.
+``` sql
+SELECT W.FIRST_NAME, W.LAST_NAME, BonusCounts.TotalBonuses
+FROM Worker W
+JOIN (
+    SELECT WORKER_REF_ID, COUNT(*) AS TotalBonuses
+    FROM Bonus
+    GROUP BY WORKER_REF_ID
+) AS BonusCounts ON W.WORKER_ID = BonusCounts.WORKER_REF_ID;
+```
+![image](https://github.com/user-attachments/assets/ced43c7b-151f-406a-8eec-fd43ec279cd5)
+
+3. Inside a SELECT clause.
+``` sql
+SELECT W.FIRST_NAME, W.LAST_NAME,
+       (SELECT SUM(BONUS_AMOUNT) 
+        FROM Bonus 
+        WHERE WORKER_REF_ID = W.WORKER_ID) AS TotalBonus
+FROM Worker W;
+```
+![image](https://github.com/user-attachments/assets/ebf51f01-6aae-4b3e-b101-c97cf5e65e1d)
+
+
+
+
+2. Co-related sub-queries
+With a normal nested subquery, the inner SELECT query runs first and executes once, returning values to be used by the main query. A correlated subquery, however, executes once for each candidate row considered by the outer query. In other words, the inner query is driven by the outer query.
+
+``` sql
+SELECT FIRST_NAME, LAST_NAME
+FROM Worker W1
+WHERE SALARY > (
+    SELECT AVG(SALARY)
+    FROM Worker W2
+    WHERE W1.DEPARTMENT = W2.DEPARTMENT
+);
+```
+![image](https://github.com/user-attachments/assets/2b745f29-2e4a-47ec-97d6-7c5566c2e281)
+
+
 
 ### Set Operation
 
@@ -328,56 +431,47 @@ select worker.* from worker inner join worker_clone using(worker_id);
 * SELECT * FROM table1 UNION
 SELECT * FROM table2;
 * Number of column, order of column must be same for table1 and table2.
+``` sql
+SELECT FIRST_NAME FROM Worker
+UNION
+SELECT WORKER_TITLE FROM Title;
+```
+<img width="203" alt="Screenshot 2024-09-22 at 6 13 52 PM" src="https://github.com/user-attachments/assets/b76b50e5-a183-4266-8722-8ec2de14d616">
+
 2. INTERSECT
 * Returns common values of the tables.
 * SELECT DISTINCT column-list FROM table-1 INNER JOIN table-2 USING(join_cond);
-* SELECT DISTINCT * FROM table1 INNER JOIN table2 ON USING(id);
+``` sql
+SELECT W.FIRST_NAME
+FROM Worker W
+INNER JOIN Title T ON W.WORKER_ID = T.WORKER_REF_ID;
+```
+![image](https://github.com/user-attachments/assets/90bfea92-b4a9-45d6-8905-5fba24b1d8c8)
+
+
 3. MINUS
 * This operator returns the distinct row from the first table that does not occur in the second table.
 * SELECT column_list FROM table1 LEFT JOIN table2 ON condition WHERE table2.column_name IS NULL;
-* e.g., SELECT id FROM table-1 LEFT JOIN table-2 USING(id) WHERE table-2.id IS NULL;
 
-### SUB QUERIES and corelated queries
-1. Outer query depends on inner query.
-2. Alternative to joins.
-3. Nested queries.
-4. SELECT column_list (s) FROM table_name WHERE column_name OPERATOR
-(SELECT column_list (s) FROM table_name [WHERE]);
-5. e.g., SELECT * FROM table1 WHERE col1 IN (SELECT col1 FROM table1);
-6. Sub queries exist mainly in 3 clauses
-1. Inside a WHERE clause.
-JOIN SET Operations
-Combines multiple tables based on matching
-condition.
+``` sql
+INSERT INTO Worker (FIRST_NAME, LAST_NAME, SALARY, JOINING_DATE, DEPARTMENT) VALUES
+('John', 'Doe', 60000, '2023-01-01 09:00:00', 'HR');
+```
 
-Combination is resulting set from two or more
-SELECT statements.
-Column wise combination. Row wise combination.
-Data types of two tables can be different. Datatypes of corresponding columns from each
+``` sql
+SELECT W.FIRST_NAME
+FROM Worker W
+LEFT JOIN Title T ON W.WORKER_ID = T.WORKER_REF_ID
+WHERE T.WORKER_REF_ID IS NULL;
+```
+![image](https://github.com/user-attachments/assets/ca03f7a0-4d94-4147-8fe9-99dfa7d6567f)
 
-table should be the same.
-Can generate both distinct or duplicate rows. Generate distinct rows.
-The number of column(s) selected may or may not
-be the same from each table.
 
-The number of column(s) selected must be the
-same from each table.
-Combines results horizontally. Combines results vertically.
-CodeHelp
-
-2. Inside a FROM clause.
-3. Inside a SELECT clause.
-7. Subquery using FROM clause
-1. SELECT MAX(rating) FROM (SELECT * FROM movie WHERE country = ‘India’) as temp;
-8. Subquery using SELECT
-1. SELECT (SELECT column_list(s) FROM T_name WHERE condition), columnList(s) FROM T2_name WHERE
-condition;
-9. Derived Subquery
-1. SELECT columnLists(s) FROM (SELECT columnLists(s) FROM table_name WHERE [condition]) as new_table_name;
-10. Co-related sub-queries
-1. With a normal nested subquery, the inner SELECT query
-runs first and executes once, returning values to be used by
-the main query. A correlated subquery, however, executes
-once for each candidate row considered by the outer query.
-In other words, the inner query is driven by the outer query.
+### Window functions
+ROW_NUMBER(): Unique sequential number for rows.
+RANK(): Rank with gaps for ties.
+DENSE_RANK(): Rank without gaps for ties.
+NTILE(): Divide the result set into specified groups.
+LAG(): Access data from the previous row.
+LEAD(): Access data from the next row.
 
