@@ -517,6 +517,7 @@ FROM Worker;
 ![image](https://github.com/user-attachments/assets/0221242b-6744-466f-95f4-ab12460fc485)
 
 ### Pivoting and unpivoting data
+* Pivot
 ``` sql
 SELECT 
     W.FIRST_NAME,
@@ -530,6 +531,33 @@ GROUP BY
     W.FIRST_NAME;
 ```
 ![image](https://github.com/user-attachments/assets/90736d7d-729d-44c3-8760-8de87b25d842)
+
+* Unpivot
+``` sql
+SELECT 
+    W.FIRST_NAME,
+    'Bonus_Feb_2016' AS Bonus_Period,
+    B.BONUS_AMOUNT
+FROM 
+    Worker W
+JOIN 
+    Bonus B ON W.WORKER_ID = B.WORKER_REF_ID
+WHERE 
+    B.BONUS_DATE = '2016-02-20'
+
+UNION ALL
+
+SELECT 
+    W.FIRST_NAME,
+    'Bonus_Jun_2016' AS Bonus_Period,
+    B.BONUS_AMOUNT
+FROM 
+    Worker W
+JOIN 
+    Bonus B ON W.WORKER_ID = B.WORKER_REF_ID
+WHERE 
+    B.BONUS_DATE = '2016-06-11';
+```
 
 
 
@@ -584,8 +612,6 @@ CALL SelectWorkersByDepartmentAndDate('HR', '2020-01-01');
 User-defined functions in SQL Server are custom functions created by users to perform specific tasks. They can accept parameters, execute a block of SQL code, and return a single value or a table result set. SQL Server supports three types of user-defined functions:
 
 1. Scalar Functions: These functions return a single value based on the input parameters.
-2. Inline Table-Valued Functions (iTVFs): These functions return a table variable result set.
-3. Multi-Statement Table-Valued Functions (mTVFs): These functions return a table result set after executing a block of SQL code.
 This function calculates the annual salary of a worker based on their monthly salary.
 ``` sql
 DELIMITER //
@@ -605,6 +631,34 @@ FROM Worker;
 ```
 ![image](https://github.com/user-attachments/assets/e427c39a-2f39-4538-a86c-09dc16182307)
 
+
+2. Inline Table-Valued Functions (iTVFs): These functions return a table variable result set.
+``` sql
+DELIMITER //
+
+CREATE FUNCTION GetWorkersByDepartment(dept CHAR(25))
+RETURNS INT
+READS SQL DATA
+BEGIN
+    DROP TEMPORARY TABLE IF EXISTS temp_worker;
+    
+    CREATE TEMPORARY TABLE temp_worker AS
+    SELECT * FROM Worker WHERE DEPARTMENT = dept;
+
+    RETURN (SELECT COUNT(*) FROM temp_worker);
+END //
+
+DELIMITER ;
+```
+``` sql
+SELECT GetWorkersByDepartment('Admin') AS WorkerCount;
+```
+![alt text](image.png)
+3. Multi-Statement Table-Valued Functions (mTVFs): These functions return a table result set after executing a block of SQL code.
+
+* Note: 
+Use DETERMINISTIC if the function's output is predictable based solely on its input parameters.<br/>
+Use READS SQL DATA if the function reads data but does not modify it.
 
 ### Triggers and its uses
 
@@ -665,35 +719,26 @@ CREATE PROCEDURE AddBonusAndUpdateTitle(
 )
 BEGIN
     DECLARE totalBonus INT DEFAULT 0;
-
-    -- Error handling for SQL exceptions
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- Rollback the transaction if there's an error
         ROLLBACK;
         SELECT 'Error occurred while processing the transaction.' AS Message;
     END;
 
-    -- Start the transaction
     START TRANSACTION;
-
-    -- Insert the bonus into the Bonus table
     INSERT INTO Bonus (WORKER_REF_ID, BONUS_AMOUNT, BONUS_DATE)
     VALUES (workerID, bonusAmount, bonusDate);
 
-    -- Calculate total bonuses for the worker
     SELECT SUM(BONUS_AMOUNT) INTO totalBonus
     FROM Bonus
     WHERE WORKER_REF_ID = workerID;
 
-    -- Update the title if total bonuses exceed 10,000
     IF totalBonus > 10000 THEN
         UPDATE Title
         SET WORKER_TITLE = 'Senior'
         WHERE WORKER_REF_ID = workerID;
     END IF;
 
-    -- Commit the transaction
     COMMIT;
     SELECT 'Transaction completed successfully.' AS Message;
 END //
