@@ -559,6 +559,7 @@ WHERE
     B.BONUS_DATE = '2016-06-11';
 ```
 
+![image](https://github.com/user-attachments/assets/c84c0160-e81b-4889-b69e-ca8710f651c8)
 
 
 ## 6. Stored Procedures and Functions
@@ -653,7 +654,8 @@ DELIMITER ;
 ``` sql
 SELECT GetWorkersByDepartment('Admin') AS WorkerCount;
 ```
-![alt text](image.png)
+<img width="172" alt="Screenshot 2024-09-23 at 6 57 27 AM" src="https://github.com/user-attachments/assets/d5fce4d1-b3f2-4c9a-a247-5f1724170a4a">
+
 3. Multi-Statement Table-Valued Functions (mTVFs): These functions return a table result set after executing a block of SQL code.
 
 * Note: 
