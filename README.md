@@ -590,6 +590,81 @@ WHERE JOINING_DATE < '2020-12-12';
 ```
 ![image](https://github.com/user-attachments/assets/e5f060ad-a263-4da1-88f5-439b219a9e99)
 
+### Query optimization techniques
+* Using Indexes: Ensure that appropriate indexes are created on columns frequently used in WHERE clauses to speed up data retrieval.
+* WHERE instead of HAVING: Use the WHERE clause to filter records before aggregation, which improves performance compared to using HAVING.
+* Avoid Queries inside a Loop: Minimize the use of queries within loops by batching operations to reduce database round trips.
+* Use SELECT instead of SELECT *: Specify only the necessary columns in your SELECT statement to reduce data transfer and improve performance.
+* Reduce the Use of Wildcard (%) in LIKE Operator: Limit the use of leading wildcards to improve index usage and reduce full table scans.
+* Use EXISTS() instead of COUNT(): Utilize EXISTS for checks on record existence instead of COUNT(), which is generally more efficient.
+* Avoid Subqueries: Replace subqueries with JOINs when possible to enhance performance and simplify execution plans.
+* Denormalization: Consider denormalizing data structures for read-heavy applications to reduce the need for complex JOINs.
+
+### Explain plans and query execution analysis
+An execution plan in SQL is a detailed plan that outlines the steps that the database management system (DBMS) will take to execute a query. It is a crucial component of query optimization, as it helps the DBMS determine the most efficient way to retrieve data from the database.
+
+* Types of Execution Plan in SQL
+There are two types of Execution Plans in SQL:
+1. Actual Execution Plan
+An actual execution plan is the SQL Server query plan that is generated after a query has been executed. It contains runtime information, such as actual resource usage metrics and any runtime warnings that occurred during execution.
+
+An actual execution plan displays the actual query execution plan that the SQL Server Database Engine used to execute the queries. You can find the information about actual number of rows processed, resource utilization, and other relevant statistics
+
+2. Estimated Execution Plan
+An estimated execution plan is a prediction made by the SQL Server query optimizer regarding the steps it expects to take when executing a query. The estimated execution plan is generated before the query is executed.
+
+Estimated execution plans are created during query compilation, before the query is actually executed. These plans are based on statistical information about the database schema, indexes, and data distribution.
+
+An estimated execution plan provides information about the expected sequence of operations. It includes details about the logical and physical operators involved (e.g., scans, joins, sorts).
+
+### Partitioning and sharding strategies
+* Sharding
+Sharding is a method of database architecture, mainly employed for horizontal partitioning across multiple machines or databases. Each shard functions as a separate database, and together, they comprise a single logical database. Sharding distributes data according to a specific key, such as customer ID or geographic location, with the goal of decreasing the load on each database and thereby improving performance.
+
+* Partitioning
+Partitioning is the process of dividing a database into distinct sections, or partitions, that can be stored and managed separately, it is commonly used to mean vertical partitioning. This division occurs within a single database system, eliminating the need for distribution across multiple servers. Partitioning is often implemented to enhance manageability, performance, and availability of large databases by organizing data into smaller, more manageable segments. 
+
+### Concurrency control and isolation levels
+* Concurrency Control
+Concurrency Control is the working concept that is required for controlling and managing the concurrent execution of database operations and thus avoiding the inconsistencies in the database. Thus, for maintaining the concurrency of the database, we have the concurrency control protocols.
+
+The concurrency control protocols ensure the atomicity, consistency, isolation, durability and serializability of the concurrent execution of the database transactions. Therefore, these protocols are categorized as:
+1. Lock Based Concurrency Control Protocol
+2. Time Stamp Concurrency Control Protocol
+3. Validation Based Concurrency Control Protocol
+
+* Isolation Levels
+1. Read Uncommitted – Read Uncommitted is the lowest isolation level. In this level, one transaction may read not yet committed changes made by other transactions, thereby allowing dirty reads. At this level, transactions are not isolated from each other.
+2. Read Committed – This isolation level guarantees that any data read is committed at the moment it is read. Thus it does not allow dirty read. The transaction holds a read or write lock on the current row, and thus prevents other transactions from reading, updating, or deleting it.
+3. Repeatable Read – This is the most restrictive isolation level. The transaction holds read locks on all rows it references and writes locks on referenced rows for update and delete actions. Since other transactions cannot read, update or delete these rows, consequently it avoids non-repeatable read.
+4. Serializable – This is the highest isolation level. A serializable execution is guaranteed to be serializable. Serializable execution is defined to be an execution of operations in which concurrently executing transactions appears to be serially executing.
+
+### Deadlocks and how to handle them
+A deadlock in a database management system (DBMS) is a situation where two or more processes are blocked, waiting for each other to release a resource that they need to proceed with their execution. This creates a circular wait, where each process is waiting for a resource that is held by another process, leading to a complete blockage of the system. 
+<img width="496" alt="Screenshot 2024-09-23 at 12 14 28 PM" src="https://github.com/user-attachments/assets/17d8222e-9203-4f67-a828-f60d67ee7b5f">
+
+* Necessary Conditions for Deadlock to Occur
+There are four necessary conditions that must be met for a deadlock to occur in a DBMS.
+
+1. Mutual Exclusion: At least one resource must be held in a non-shareable mode, meaning only one process can access it at a time.
+2. Hold and Wait: A process is holding at least one resource and is waiting for additional resources that are currently held by other processes.
+3. No Preemption Condition: Resources cannot be taken away from a process and given to another process.
+4. Circular Wait: A set of processes are waiting for resources held by each other, forming a circular chain.
+
+* Deadlock Avoidance in DBMS
+There are two main methods for deadlock avoidance in DBMS are Resource Allocation Graph (RAG) Algorithm and Wait-For Graph Algorithms. Both of these approaches aim to ensure that there are no circular wait conditions in the system, which is the root cause of deadlocks.
+
+* Deadlock Detection in DBMS
+Wait-for Graph: This method uses a graph-based model to represent the allocation of resources. The graph is used to detect the existence of cycles, which indicate a deadlock has occurred. The wait-for graph is updated whenever a resource is requested or released.
+![image](https://github.com/user-attachments/assets/90e59fe9-2599-4650-924f-27f73c43c725)
+
+* Deadlock Prevention in DBMS
+There are two main schemes followed for Deadlock Prevention in DBMS namely, Wait Die and Wound Wait Schemes. These are explained below in detail:
+
+1. Wait-Die Scheme
+The Wait-Die algorithm is a deadlock prevention scheme used in DBMS (Database Management Systems). The algorithm makes use of timestamps to prevent deadlocks from occurring in a multi-user database environment.
+2. Wound-Wait Scheme
+The Wound-Wait Algorithm is a deadlock prevention strategy in database management systems (DBMS). It is based on the idea that the process requesting a resource with the lowest timestamp (i.e., the oldest process) will be granted access to the resource first.
 
 ## 6. Stored Procedures and Functions
 
