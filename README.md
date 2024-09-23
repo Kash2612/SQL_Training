@@ -561,6 +561,35 @@ WHERE
 
 ![image](https://github.com/user-attachments/assets/c84c0160-e81b-4889-b69e-ca8710f651c8)
 
+## 5. Database Design and Optimization
+### Indexing: clustered vs. non-clustered indexes
+* Clustered
+1. Clustered indexes sort and store the data rows in the table or view based on their key values. These key values are the columns included in the index definition. There can be only one clustered index per table, because the data rows themselves can be stored in only one order.
+2. The only time the data rows in a table are stored in sorted order is when the table contains a clustered index. When a table has a clustered index, the table is called a clustered table. If a table has no clustered index, its data rows are stored in an unordered structure called a heap.
+
+* Nonclustered
+
+1. Nonclustered indexes have a structure separate from the data rows. A nonclustered index contains the nonclustered index key values and each key value entry has a pointer to the data row that contains the key value.
+
+2. The pointer from an index row in a nonclustered index to a data row is called a row locator. The structure of the row locator depends on whether the data pages are stored in a heap or a clustered table. For a heap, a row locator is a pointer to the row. For a clustered table, the row locator is the clustered index key.
+
+
+* NOTE: Both clustered and nonclustered indexes can be unique. With a unique index, no two rows can have the same value for the index key. Otherwise, the index isn't unique and multiple rows can share the same key value.
+
+ * Covering Indexes:
+All the columns requested in the query are available in the index.
+
+* Creating Indexes
+``` sql
+CREATE INDEX joining_date_idx
+ON Worker (JOINING_DATE);
+```
+``` sql
+SELECT * FROM Worker
+WHERE JOINING_DATE < '2020-12-12';
+```
+![image](https://github.com/user-attachments/assets/e5f060ad-a263-4da1-88f5-439b219a9e99)
+
 
 ## 6. Stored Procedures and Functions
 
