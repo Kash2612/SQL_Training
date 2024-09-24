@@ -863,3 +863,335 @@ SELECT * FROM Title WHERE WORKER_REF_ID = 2;
 
 ![image](https://github.com/user-attachments/assets/124952dd-bf7c-47b6-8148-4b20c7978209)
 
+
+
+## CASE STUDY 1
+### DESCRIPTION
+
+Your task is to prepare a list of cities with the date of last reservation made in the city and a main photo (photos[0]) of the most popular (by number of bookings) hotel in this city.
+
+Sort results in ascending order by city. If many hotels have the same amount of bookings sort them by ID (ascending order).
+Remember that the query will also be run of different datasets.
+
+## Sample Data
+
+### Table: city
+
+| id  |   name    |
+| :-: | :-------: |
+|  1  | Barcelona |
+|  2  |   Roma    |
+|  3  |   Paris   |
+|  4  | New York  |
+|  5  |   Tokyo   |
+|  6  |  Sydney   |
+
+### Table: hotel
+
+| id  | city_id |      name       | day_price |          photos          |
+| :-: | :-----: | :-------------: | :-------: | :----------------------: |
+|  1  |    1    |  The New View   |   67.00   |  ["1-1.jpg", "1-2.jpg"]  |
+|  2  |    1    | The Upper House |   99.00   |  ["2-1.jpg", "2-2.jpg"]  |
+|  3  |    2    |    Ace Hotel    |   90.00   |  ["3-1.jpg", "3-2.jpg"]  |
+|  4  |    2    |   Hotel Diva    |  111.00   |  ["4-1.jpg", "4-2.jpg"]  |
+|  5  |    3    |  Hotel Triton   |  105.00   |  ["5-1.jpg", "5-2.jpg"]  |
+|  6  |    4    |  Grand Palace   |  150.00   |  ["6-1.jpg", "6-2.jpg"]  |
+|  7  |    5    | Tokyo Tower Inn |  200.00   |  ["7-1.jpg", "7-2.jpg"]  |
+|  8  |    6    |  Sydney Suites  |  180.00   |  ["8-1.jpg", "8-2.jpg"]  |
+|  9  |    4    |  New York Inn   |  120.00   |  ["9-1.jpg", "9-2.jpg"]  |
+| 10  |    5    |  Sakura Hotel   |  220.00   | ["10-1.jpg", "10-2.jpg"] |
+
+### Table: booking
+
+| id  | hotel_id | booking_date | start_date |  end_date  |
+| :-: | :------: | :----------: | :--------: | :--------: |
+|  1  |    1     |  2024-06-10  | 2024-07-01 | 2024-07-05 |
+|  2  |    2     |  2024-06-11  | 2024-07-02 | 2024-07-06 |
+|  3  |    3     |  2024-06-12  | 2024-07-03 | 2024-07-07 |
+|  4  |    4     |  2024-06-13  | 2024-07-04 | 2024-07-08 |
+|  5  |    5     |  2024-06-14  | 2024-07-05 | 2024-07-09 |
+|  6  |    6     |  2024-06-15  | 2024-07-06 | 2024-07-10 |
+|  7  |    7     |  2024-06-16  | 2024-07-07 | 2024-07-11 |
+|  8  |    8     |  2024-06-17  | 2024-07-08 | 2024-07-12 |
+|  9  |    9     |  2024-06-18  | 2024-07-09 | 2024-07-13 |
+| 10  |    10    |  2024-06-19  | 2024-07-10 | 2024-07-14 |
+| 11  |    1     |  2024-06-20  | 2024-07-11 | 2024-07-15 |
+| 12  |    2     |  2024-06-21  | 2024-07-12 | 2024-07-16 |
+| 13  |    3     |  2024-06-22  | 2024-07-13 | 2024-07-17 |
+| 14  |    4     |  2024-06-23  | 2024-07-14 | 2024-07-18 |
+| 15  |    5     |  2024-06-24  | 2024-07-15 | 2024-07-19 |
+| 16  |    6     |  2024-06-25  | 2024-07-16 | 2024-07-20 |
+| 17  |    7     |  2024-06-26  | 2024-07-17 | 2024-07-21 |
+| 18  |    8     |  2024-06-27  | 2024-07-18 | 2024-07-22 |
+| 19  |    9     |  2024-06-28  | 2024-07-19 | 2024-07-23 |
+| 20  |    10    |  2024-06-29  | 2024-07-20 | 2024-07-24 |
+
+### Expected ouput
+
+| city_name | last_booking_date        | hotel_id | hotel_photo |
+| --------- | ------------------------ | -------- | ----------- |
+| Barcelona | 2024-06-21T00:00:00.000Z | 1        | 1-1.jpg     |
+| Barcelona | 2024-06-21T00:00:00.000Z | 2        | 2-1.jpg     |
+| New York  | 2024-06-28T00:00:00.000Z | 6        | 6-1.jpg     |
+| New York  | 2024-06-28T00:00:00.000Z | 9        | 9-1.jpg     |
+| Paris     | 2024-06-24T00:00:00.000Z | 5        | 5-1.jpg     |
+| Roma      | 2024-06-23T00:00:00.000Z | 3        | 3-1.jpg     |
+| Roma      | 2024-06-23T00:00:00.000Z | 4        | 4-1.jpg     |
+| Sydney    | 2024-06-27T00:00:00.000Z | 8        | 8-1.jpg     |
+| Tokyo     | 2024-06-29T00:00:00.000Z | 7        | 7-1.jpg     |
+| Tokyo     | 2024-06-29T00:00:00.000Z | 10       | 10-1.jpg    |
+
+```sql
+CREATE TABLE city
+(
+	id INT PRIMARY KEY,
+	name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE hotel
+(
+	id INT PRIMARY KEY,
+	city_id INT NOT NULL REFERENCES city,
+	name VARCHAR(50) NOT NULL,
+	day_price NUMERIC(8, 2) NOT NULL,
+	photos JSONB DEFAULT '[]'
+);
+
+
+CREATE TABLE booking
+(
+	id int PRIMARY KEY,
+	hotel_id INT NOT NULL REFERENCES hotel,
+	booking_date DATE NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL
+);
+
+INSERT INTO city (id, name) VALUES
+(1, 'Barcelona'),
+(2, 'Roma'),
+(3, 'Paris'),
+(4, 'New York'),
+(5, 'Tokyo'),
+(6, 'Sydney');
+
+INSERT INTO hotel (id, city_id, name, day_price, photos) VALUES
+(1, 1, 'The New View', 67.00, '["1-1.jpg", "1-2.jpg"]'),
+(2, 1, 'The Upper House', 99.00, '["2-1.jpg", "2-2.jpg"]'),
+(3, 2, 'Ace Hotel', 90.00, '["3-1.jpg", "3-2.jpg"]'),
+(4, 2, 'Hotel Diva', 111.00, '["4-1.jpg", "4-2.jpg"]'),
+(5, 3, 'Hotel Triton', 105.00, '["5-1.jpg", "5-2.jpg"]'),
+(6, 4, 'Grand Palace', 150.00, '["6-1.jpg", "6-2.jpg"]'),
+(7, 5, 'Tokyo Tower Inn', 200.00, '["7-1.jpg", "7-2.jpg"]'),
+(8, 6, 'Sydney Suites', 180.00, '["8-1.jpg", "8-2.jpg"]'),
+(9, 4, 'New York Inn', 120.00, '["9-1.jpg", "9-2.jpg"]'),
+(10, 5, 'Sakura Hotel', 220.00, '["10-1.jpg", "10-2.jpg"]');
+
+INSERT INTO booking (id, hotel_id, booking_date, start_date, end_date) VALUES
+(1, 1, '2024-06-10', '2024-07-01', '2024-07-05'),
+(2, 2, '2024-06-11', '2024-07-02', '2024-07-06'),
+(3, 3, '2024-06-12', '2024-07-03', '2024-07-07'),
+(4, 4, '2024-06-13', '2024-07-04', '2024-07-08'),
+(5, 5, '2024-06-14', '2024-07-05', '2024-07-09'),
+(6, 6, '2024-06-15', '2024-07-06', '2024-07-10'),
+(7, 7, '2024-06-16', '2024-07-07', '2024-07-11'),
+(8, 8, '2024-06-17', '2024-07-08', '2024-07-12'),
+(9, 9, '2024-06-18', '2024-07-09', '2024-07-13'),
+(10, 10, '2024-06-19', '2024-07-10', '2024-07-14'),
+(11, 1, '2024-06-20', '2024-07-11', '2024-07-15'),
+(12, 2, '2024-06-21', '2024-07-12', '2024-07-16'),
+(13, 3, '2024-06-22', '2024-07-13', '2024-07-17'),
+(14, 4, '2024-06-23', '2024-07-14', '2024-07-18'),
+(15, 5, '2024-06-24', '2024-07-15', '2024-07-19'),
+(16, 6, '2024-06-25', '2024-07-16', '2024-07-20'),
+(17, 7, '2024-06-26', '2024-07-17', '2024-07-21'),
+(18, 8, '2024-06-27', '2024-07-18', '2024-07-22'),
+(19, 9, '2024-06-28', '2024-07-19', '2024-07-23'),
+(20, 10, '2024-06-29', '2024-07-20', '2024-07-24');
+```
+
+``` sql
+WITH last_booking AS (
+    -- Get the last booking date for each city
+    SELECT
+        h.city_id,
+        MAX(b.booking_date) AS last_booking_date
+    FROM
+        hotel h
+    LEFT JOIN
+        booking b ON h.id = b.hotel_id
+    GROUP BY
+        h.city_id
+),
+
+hotel_bookings AS (
+    -- Count bookings per hotel
+    SELECT
+        h.city_id,
+        h.id AS hotel_id,
+        COUNT(b.id) AS booking_count,
+        h.photos
+    FROM
+        hotel h
+    LEFT JOIN
+        booking b ON h.id = b.hotel_id
+    GROUP BY
+        h.city_id, h.id, h.photos
+)
+
+SELECT
+    c.name AS city_name,
+    lb.last_booking_date,
+    hb.hotel_id,
+    hb.photos->>0 AS hotel_photo
+FROM
+    last_booking lb
+JOIN
+    city c ON lb.city_id = c.id
+JOIN
+    hotel_bookings hb ON lb.city_id = hb.city_id
+WHERE
+    lb.last_booking_date = (
+        SELECT MAX(b.booking_date)
+        FROM booking b
+        JOIN hotel h ON b.hotel_id = h.id
+        WHERE h.city_id = lb.city_id
+    )
+ORDER BY
+    c.name ASC, hb.hotel_id ASC;
+```
+<img width="446" alt="Screenshot 2024-09-24 at 11 21 58 AM" src="https://github.com/user-attachments/assets/171dbc8a-1892-44e1-8919-1d0768604467">
+
+
+## CASE STUDY 2
+We have:
+• a machine learning binary classifier which takes as input an image and outputs the
+image quality score (from 0 to 1, where scores closer to 0 represent low-quality
+images, and scores closer to 1 represent high-quality images).
+• a SQL table containing 1M unlabeled images. We run each of these images through our machine learning model to get float scores from 0 to 1 for each image.
+
+We want to prepare a new training set with some of these unlabeled images. An example of unlabeled _image_predictions (1M rows) is shown below:
+| image_id | score |
+|----------|-------|
+| 242      | 0.23  |
+| 123      | 0.92   |
+| 248      | 0.88  |
+
+Our sampling strategy is to order the images in decreasing order of scores and sample every 3rd image starting with the first from the beginning until we get 10k positive
+samples. And we would like to do the same in the other direction, starting from the end to get 10k negative samples.
+Task: Write a SQL query that performs this sampling and creates the expected output ordered by image id with integer columns image id. weak label.
+Feel free to develop in DB-Fiddle, your own SQL sandbox, or writing the query directly in your submission. If using DB-Fiddle with PostgresSQL v12 (set the database engine on the top-left), you may find this example input table of 50 rows useful (can be pasted into the "Schema SQL" text box). You may also find ROW_NUMBER) or helpers with similar functionality useful.
+
+``` sql
+CREATE TABLE IF NOT EXISTS unlabeled_image_predictions (
+    image_id INT,
+    score FLOAT
+);
+```
+
+``` sql
+INSERT INTO unlabeled_image_predictions (image_id, score) VALUES
+(828, 0.3149),
+(705, 0.9892),
+(46, 0.5616),
+(594, 0.7670),
+(232, 0.1598),
+(524, 0.9876),
+(306, 0.6487),
+(132, 0.8823),
+(906, 0.8394),
+(272, 0.9778),
+(616, 0.1003),
+(161, 0.7113),
+(715, 0.8921),
+(109, 0.1151),
+(424, 0.7790),
+(609, 0.5241),
+(63, 0.2552),
+(276, 0.2672),
+(701, 0.0758),
+(554, 0.4418),
+(998, 0.0379),
+(809, 0.1058),
+(219, 0.7143),
+(402, 0.7655),
+(363, 0.2661),
+(624, 0.8270),
+(640, 0.8790),
+(913, 0.2421),
+(439, 0.3387),
+(464, 0.3674),
+(405, 0.6929),
+(986, 0.8931),
+(344, 0.3761),
+(847, 0.4889),
+(482, 0.5023),
+(823, 0.3361),
+(617, 0.0218),
+(47, 0.0072),
+(867, 0.4050),
+(96, 0.4498),
+(126, 0.3564),
+(943, 0.0452),
+(115, 0.5309),
+(417, 0.7168),
+(706, 0.9649),
+(166, 0.2507),
+(991, 0.4191),
+(465, 0.0895),
+(53, 0.8169),
+(971, 0.9871);
+```
+
+``` sql
+WITH ranked_images AS (
+    SELECT 
+        image_id,
+        score,
+        ROW_NUMBER() OVER (ORDER BY score DESC) AS rn_positive,
+        ROW_NUMBER() OVER (ORDER BY score ASC) AS rn_negative
+    FROM 
+        unlabeled_image_predictions
+),
+
+positive_samples AS (
+    SELECT 
+        image_id, 
+        1 AS weak_label
+    FROM 
+        ranked_images
+    WHERE 
+        rn_positive % 3 = 1
+    LIMIT 5
+),
+
+negative_samples AS (
+    SELECT 
+        image_id, 
+        0 AS weak_label
+    FROM 
+        ranked_images
+    WHERE 
+        rn_negative % 3 = 1
+    LIMIT 5
+)
+
+SELECT 
+    image_id, 
+    weak_label
+FROM 
+    positive_samples
+
+UNION ALL
+
+SELECT 
+    image_id, 
+    weak_label
+FROM 
+    negative_samples
+
+ORDER BY 
+    image_id;
+```
+
+![image](https://github.com/user-attachments/assets/90b31a8a-7985-4df7-9cca-35dc53b57b50)
